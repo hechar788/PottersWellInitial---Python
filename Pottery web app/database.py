@@ -7,31 +7,33 @@ database = mysql.connector.connect(
     database="potter"
 )
 
-cursor = database.cursor(buffered=True)
+cur = database.cursor(buffered=True)
 
-
-def signup_database_update(email, passwd): 
-    '''database signup function called when users create an account,
-        calls 'signup_proc' stored procedure after checking email validity.'''
+def login_handler(instance):
+    cur.execute(f"SELECT hash_ FROM userinfo JOIN users ON users.userID = userinfo.userID WHERE email = '{instance.email}'")
+    result = cur.fetchone()
+    if result:
+        if instance.enc_st.hexdigest() == result[0]:
+            return True, 'Login Succesful'
+        return False, "Email/Password doesn't match."
     
-    cursor.execute(f"SELECT email from users WHERE email = '{email}'")
-    if cursor.fetchall():
-        return False, 'Email already in database. Try again.', 0
+
+def signup_handler(instance):
+    cur.execute('CALL SIGNUP_PROC(%s, %s)', (instance.email, instance.enc_st.hexdigest()))
+    return True, 'Sign-up succesful.'
+
+
+def database_handler(instance):
+    '''takes standard parameters, state is type <bool> reference to wether traffic belongs to signup or login.'''
+
+    cur.execute(f"SELECT userID FROM users WHERE email = '{instance.email}'")
+
+    if cur.fetchone():
+        if instance.state:
+            return login_handler(instance)
+        return False, 'Email already in database. Signup Failure.'
     
-    cursor.execute(f"CALL signup_proc('{email}', '{passwd}')")
-    return True, 'Succesful signup, proceed to login.', 0
-
-
-def database_login(email, passwd):
-    '''database login function called when users need to login to existing accounts,
-    checks database for match on (email, passwd) using a simple join.'''
-
-    cursor.execute(f"SELECT userinfo.passwd from userinfo JOIN users ON userinfo.userID = users.userID WHERE users.email = '{email}' LIMIT 1;")
-
-    try:
-        if cursor.fetchone()[0] == passwd:
-            return (True, 'Succesful login', 1)
-        return (False, 'Invalid login. Email or Password does not match', 1)
-    
-    except TypeError:
-        return (False, 'Invalid email address. No user found.', 1)
+    else:
+        if instance.state:
+            return False, 'Email not found. Login Failure'
+        return signup_handler(instance)

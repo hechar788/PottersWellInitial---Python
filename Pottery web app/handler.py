@@ -1,21 +1,14 @@
-from flask import flash, redirect, url_for
+import hashlib
+from database import database_handler
+from flask import flash
 
-class handler:
+class conn:
 
-    def __init__(self, tup):
-        self.valid = tup[0]
-        self.msg= tup[1]
-        self.state = tup[2]
+    def __init__(self, email, passwd, state):
+        self.email = email 
+        self.enc_st = hashlib.sha512(passwd.encode('utf-8'))
+        self.state = state
 
-    def handle_flash(self):
-        return flash(self.msg)
-
-def handle(tup):
-    instance = handler(tup)
-
-    instance.handle_flash()
-
-    if instance.valid:
-        if instance.state:
-            return (redirect(url_for('views.home')), instance.msg)
-        return (redirect(url_for('views.login')), instance.msg)
+def handler(email, passwd, state=False):
+    obj = database_handler(conn(email, passwd, state))
+    flash(obj[1])

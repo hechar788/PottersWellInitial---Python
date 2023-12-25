@@ -1,6 +1,5 @@
 from flask import render_template, Blueprint, request
-from database import signup_database_update, database_login
-from handler import handle
+from handler import handler
 
 views = Blueprint(__name__, 'views')
 
@@ -14,9 +13,8 @@ def sign_up():
     if request.method == 'POST':
     
         #runs querys via mysql-connector to write new account to database
-        info = handle(signup_database_update(request.form['email'], request.form['password']))
-        if info:
-            return info[0]
+        handler(request.form['email'], request.form['password'])
+
     
     return render_template("sign-up.html")
 
@@ -24,15 +22,13 @@ def sign_up():
 @views.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
-
+        
         #compares posted info to database for validation of (email, passwd) combination
-        info = handle((database_login(request.form['email'], request.form['password'])))
-        if info:
-            return info[0]  
-
+        handler(request.form['email'], request.form['password'], True)
+        
     return render_template("login.html")
 
 
-@views.route('/our-story')
-def our_story():
-    return "<h1>our-story<h1>"
+@views.route('/our-story/<string:blog_id>')
+def our_story(blog_id):
+    return f"<h1>our-story {blog_id}<h1>"
