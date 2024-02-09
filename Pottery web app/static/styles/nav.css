@@ -1,0 +1,39 @@
+
+button {background-color: white;
+color: rgba(103, 108, 239, 0.881);
+border-color: rgba(103, 108, 239, 0.881);
+height: 38px;
+width: 90px;
+
+font-size: 11px;
+font-weight: bold;
+
+transition: opacity 0.25s, color 0.8s, box-shadow 3s;
+}
+
+button:hover {
+opacity: 0.7;
+background-color: rgba(103, 108, 239, 0.881);
+color: white;
+box-shadow: -5px 5px 20px rgba(53, 60, 247, 0.385);
+}
+
+.base {float: left;
+padding-right: 5px;
+}
+
+.register {float: right;
+padding-left: 5px;}
+
+.nav-div {
+padding-bottom: 40px;}
+
+.header {display: inline-block;
+    margin: 0px;
+margin-left: 400px;}
+
+.nav-button {float:left;
+margin-top: 6px;
+margin-right: 5px;
+
+}

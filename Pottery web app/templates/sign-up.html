@@ -2,16 +2,14 @@
 
 {% block body %}
 <center>
-    <h1>Sign-up Page</h1>
+    <h3>Sign-up</h3>
 
     <form method="post">    
-        <p>E-mail <input type="text" name="email"/></p>
-        <p>Passwd <input type="text" name="password"/></p>
-
-
-        <p><input type="submit" name="sign-up" value="Sign-up"/></p>
+        <input class='input-box1' type="text" required placeholder='E-Mail' name="email"/>
+        <input class='input-box2' type="text" required placeholder='Password' name="password"/>
+    
+    
+        <input class='submit-button' type="submit" name="sign-up" value="Sign-up"/>
     </form>
 </center>
-
-
 {% endblock %}
