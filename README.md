@@ -4,7 +4,7 @@ Potters well web app
 # Curr Ver 3.0
 - added server-side session functionality using Redis and Flask-Session.
 - optimized database.py login procedure
-- 
+- refining html and css and added more 'views' routes
  
  Ver 2.0 
 - Restructured handler and database lookup 
