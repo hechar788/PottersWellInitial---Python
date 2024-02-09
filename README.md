@@ -1,7 +1,11 @@
 # Potter
 Potters well web app
 
-# Current Ver 2.0 
+# Curr Ver 3.0
+- added server-side session functionality using Redis and Flask-Session.
+- 
+ 
+ Ver 2.0 
 - Restructured handler and database lookup 
 - Added hashing algorithm sha512 to encrypt sensitive information being stored in the database
 
