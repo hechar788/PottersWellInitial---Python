@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block profile_nav %}
+<form class="register" action="{{url_for('views.book_a_class')}}">
+    <button type="submit">Book a Class</button>
+</form>
+{% endblock %}
+
+{% block body %}
+<center>
+<h3>Profile</h3>
+
+<form method="post">
+    <input type="submit" value="logout">
+</form>
+</center>
+{% endblock %}

@@ -9,31 +9,34 @@ database = mysql.connector.connect(
 
 cur = database.cursor(buffered=True)
 
-def login_handler(instance):
-    cur.execute(f"SELECT hash_ FROM userinfo JOIN users ON users.userID = userinfo.userID WHERE email = '{instance.email}'")
+def login_handler():
+    cur.execute(f"SELECT users.userID FROM userinfo JOIN users ON users.userID = userinfo.userID WHERE email = '{user.email}' AND hash_ = '{user.enc_st.hexdigest()}'")
     result = cur.fetchone()
     if result:
-        if instance.enc_st.hexdigest() == result[0]:
-            return True, 'Login Succesful'
-        return False, "Email/Password doesn't match."
+        return True, 'Login Succesful', result[0]
+    return False, "Credentials dont match."
     
 
-def signup_handler(instance):
-    cur.execute('CALL SIGNUP_PROC(%s, %s)', (instance.email, instance.enc_st.hexdigest()))
+def signup_handler():
+    '''runs database stored procedure for valid signup case.'''
+    cur.callproc('SIGNUP_PROCEDURE', (user.email, user.enc_st.hexdigest()))
+    database.commit()
     return True, 'Sign-up succesful.'
 
 
 def database_handler(instance):
     '''takes standard parameters, state is type <bool> reference to wether traffic belongs to signup or login.'''
+    global user
+    user = instance
 
-    cur.execute(f"SELECT userID FROM users WHERE email = '{instance.email}'")
+    cur.execute(f"SELECT userID FROM users WHERE email = '{user.email}'")
 
     if cur.fetchone():
-        if instance.state:
-            return login_handler(instance)
-        return False, 'Email already in database. Signup Failure.'
+        if user.state:
+            return login_handler()
+        return False, 'Email already in use. Signup Failure.'
     
     else:
-        if instance.state:
+        if user.state:
             return False, 'Email not found. Login Failure'
-        return signup_handler(instance)
+        return signup_handler()
